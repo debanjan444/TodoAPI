@@ -13,8 +13,8 @@ namespace Todo.Infrastructure.Repository
 {
     public class GenericRepository<TDomain, TEntity> : IGenericRepository<TDomain> where TDomain : class where TEntity : class
     {
-        private readonly TodoAppDbContext _todoAppDbContext;
-        private readonly IMapper _mapper;
+        protected readonly TodoAppDbContext _todoAppDbContext;
+        protected readonly IMapper _mapper;
         public GenericRepository(TodoAppDbContext todoAppDbContext, IMapper mapper)
         {
             _todoAppDbContext = todoAppDbContext;
@@ -47,5 +47,23 @@ namespace Todo.Infrastructure.Repository
             return entity ==  null ? null : _mapper.Map<TDomain>(entity);
 
         }
+        public async Task DetachAsync(object entityId)
+        {
+            var entity = _todoAppDbContext.Set<TEntity>().Find(entityId);
+            if (entity != null)
+            {
+                _todoAppDbContext.Entry(entity).State = EntityState.Detached;
+            }
+            await Task.CompletedTask;
+        }
+
+
+        public async Task UpdateAsync(TDomain domain)
+        {
+            var entity = _mapper.Map<TEntity>(domain); // domain --> entity
+
+            _todoAppDbContext.Set<TEntity>().Update(entity);
+        }
+
     }
 }

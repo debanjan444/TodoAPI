@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Todo.Domain.Enums;
+
+namespace Todo.Application.DTOs.Request;
+public record CreateTodoItemsDto(
+    string title,
+    string description,
+    TodoPriority priority,
+    DateTime dueDate,
+    DateTime remiderDate
+    );
+

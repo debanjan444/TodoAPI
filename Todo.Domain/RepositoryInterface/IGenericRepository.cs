@@ -17,5 +17,12 @@ namespace Todo.Domain.RepositoryInterface
 
 
         Task<int> CommitAsync();
+
+
+        Task DetachAsync(object entityId);
+
+
+        Task UpdateAsync(TDomain domain);
+
     }
 }
