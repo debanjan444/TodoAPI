@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Todo.API.Middlewares;
 
 namespace Todo.API
 {
@@ -15,6 +16,8 @@ namespace Todo.API
             // Add services to the container.
 
             builder.Services.AddControllers();
+
+            builder.Services.AddHttpContextAccessor();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                             .AddJwtBearer(options =>
@@ -59,7 +62,7 @@ namespace Todo.API
 
             app.UseAuthorization();
 
-
+            app.UseMiddleware<UserContextMiddleware>();
             app.MapControllers();
 
             app.Run();

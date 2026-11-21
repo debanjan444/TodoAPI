@@ -23,6 +23,8 @@ namespace Todo.API
 
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
+            services.AddScoped<ITodoRepository, TodoRepository>();
+
             return services;
         }
 
@@ -42,7 +44,8 @@ namespace Todo.API
 
             services.AddScoped<ITokenRevocationService, TokenRevokationService>();
             services.AddScoped<IRefreshTokenService, RefreshTokenService>();
-
+            services.AddScoped<ITodoService, TodoService>();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
             return services;
         }
     }

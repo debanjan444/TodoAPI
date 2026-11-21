@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Todo.API.Extensions;
+using Todo.Application.Contracts;
+using Todo.Application.DTOs.Request;
 using Todo.Application.DTOs.Response;
 
 namespace Todo.API.Controllers
@@ -11,6 +15,13 @@ namespace Todo.API.Controllers
    
     public class TodoController : ControllerBase
     {
+        private readonly ITodoService _todoService;
+
+
+        public TodoController(ITodoService todoService)
+        {
+            _todoService = todoService;
+        }
 
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -26,5 +37,16 @@ namespace Todo.API.Controllers
 
 
         }
+        [HttpPost]
+        public async Task<IActionResult> Post(
+          [FromBody] CreateTodoDto todo)
+        {
+           
+            var result = await _todoService.CreateTodoAsync(todo);
+            return result.IsSuccess ? Created() : result.ToProblemDetails();
+        }
+
+
+
     }
 }
