@@ -16,16 +16,21 @@ namespace Todo.API.Controllers
     public class TodoController : ControllerBase
     {
         private readonly ITodoService _todoService;
+        private readonly ILogger<TodoController> _logger;
 
 
-        public TodoController(ITodoService todoService)
+        public TodoController(ITodoService todoService,ILogger<TodoController> logger)
         {
             _todoService = todoService;
+            _logger = logger;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get()
         {
+            _logger.LogInformation("inside get method of the to do contorller");
+
+
             List<TodoResponseDto> todoList = [];
 
             todoList.Add(new TodoResponseDto(Name: "sample name 1", Description:"sample description 1",Metadata:null));

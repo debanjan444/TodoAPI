@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+
 using Todo.Application;
 using Todo.Application.Contracts;
 using Todo.Application.Implementation;
@@ -15,6 +16,11 @@ namespace Todo.API
         {
             services.AddDbContext<TodoAppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+
+
+
+            services.AddHealthChecks().AddDbContextCheck<TodoAppDbContext>();
 
             services.AddAutoMapper(typeof(InfraAssemblyMarker).Assembly);
 

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json;
 using Todo.API.Middlewares;
 
 namespace Todo.API
@@ -17,7 +18,18 @@ namespace Todo.API
 
             builder.Services.AddControllers();
 
+
+            builder.Services.AddLogging(options =>
+            {
+                options.AddSeq();
+            }
+            );
+
             builder.Services.AddHttpContextAccessor();
+
+
+
+            builder.Services.AddHealthChecks();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                             .AddJwtBearer(options =>
@@ -57,6 +69,36 @@ namespace Todo.API
             }
 
             app.UseHttpsRedirection();
+
+            app.MapHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions()
+            {
+                ResponseWriter = async (context, report) =>
+                {
+                    context.Response.ContentType = "application/json";
+                    var response = new
+                    {
+                        status = report.Status.ToString(),
+                        totalDuration = report.TotalDuration.TotalMilliseconds,
+                        checks = report.Entries.Select(entry => new
+                        {
+                            name = entry.Key,
+                            status = entry.Value.Status.ToString(),
+                            duration = entry.Value.Duration.TotalMilliseconds,
+                            description = entry.Value.Description,
+                        })
+
+                    };
+
+                    await context.Response.WriteAsync(
+                        JsonSerializer.Serialize(response, new JsonSerializerOptions
+                        {
+                            WriteIndented = true
+                        }));
+
+                }
+            });
+
+
 
             app.UseAuthentication();
 
