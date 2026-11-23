@@ -15,11 +15,13 @@ namespace Todo.Application.Implementation
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly IEmailService _emailService;
 
-        public UserService(IUserRepository userRepository,IMapper mapper)
+        public UserService(IUserRepository userRepository,IMapper mapper,IEmailService emailService)
         {
             _userRepository = userRepository;
             _mapper = mapper;
+            _emailService = emailService;
         }
         
         public async Task<bool> CreateUserAsync(CreateUserDto userDto)
@@ -33,7 +35,9 @@ namespace Todo.Application.Implementation
 
 
             var response = await _userRepository.CommitAsync();
-
+            if (response > 0) {
+                await _emailService.SendMailAsync(userDomain.Email);
+                    };
             return response > 0;
 
         }

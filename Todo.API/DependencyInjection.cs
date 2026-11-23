@@ -52,6 +52,8 @@ namespace Todo.API
             services.AddScoped<IRefreshTokenService, RefreshTokenService>();
             services.AddScoped<ITodoService, TodoService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+            services.AddScoped<IEmailService, EmailService>();
             return services;
         }
     }

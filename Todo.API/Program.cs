@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json;
 using Todo.API.Middlewares;
+using Todo.Application.Constants;
 
 namespace Todo.API
 {
@@ -27,6 +28,15 @@ namespace Todo.API
 
             builder.Services.AddHttpContextAccessor();
 
+            builder.Services.AddHttpClient(
+                ApplicationConstants.EmailServiceClient,
+                client =>
+                {
+                    client.BaseAddress = new Uri(
+                        builder.Configuration.GetSection(
+                            "EmailService:BaseUrl").Value!);
+                })
+                .AddStandardResilienceHandler();
 
 
             builder.Services.AddHealthChecks();
