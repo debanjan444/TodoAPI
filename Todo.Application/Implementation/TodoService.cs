@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Todo.Application.Common;
 using Todo.Application.Contracts;
 using Todo.Application.DTOs.Request;
+using Todo.Application.DTOs.Response;
 using Todo.Application.Mappers;
 using Todo.Domain.RepositoryInterface;
 
@@ -40,5 +41,16 @@ namespace Todo.Application.Implementation
                ? Result.Success()
                : Result.Failure(Error.Failure("Todo.CreateFailed", "Could not create the todo item."));
         }
+
+        public async Task<IEnumerable<TodoResponseDto>> GetItems()
+        {
+            var todoItemsDomain = await _todoRepository.GetTodosAsync(Guid.Parse(_currentUserService.GetCurrentUserId()));
+
+            return todoItemsDomain.ToResponseDtos();
+        }
+
+
+
+
     }
 }

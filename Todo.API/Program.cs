@@ -66,6 +66,8 @@ namespace Todo.API
 
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddMemoryCache();
+
             builder.Services.AddDistributedMemoryCache();
 
             var app = builder.Build();

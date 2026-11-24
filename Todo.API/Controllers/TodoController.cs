@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Todo.API.Extensions;
 using Todo.Application.Contracts;
@@ -17,12 +18,13 @@ namespace Todo.API.Controllers
     {
         private readonly ITodoService _todoService;
         private readonly ILogger<TodoController> _logger;
+        private readonly IMemoryCache _memoryCache;
 
-
-        public TodoController(ITodoService todoService,ILogger<TodoController> logger)
+        public TodoController(ITodoService todoService,ILogger<TodoController> logger,IMemoryCache memoryCache)
         {
             _todoService = todoService;
             _logger = logger;
+            _memoryCache = memoryCache;
         }
 
         [HttpGet]
@@ -31,14 +33,26 @@ namespace Todo.API.Controllers
             _logger.LogInformation("inside get method of the to do contorller");
 
 
-            List<TodoResponseDto> todoList = [];
+            //List<TodoResponseDto> todoList = [];
 
-            todoList.Add(new TodoResponseDto(Name: "sample name 1", Description:"sample description 1",Metadata:null));
+            //todoList.Add(new TodoResponseDto(Name: "sample name 1", Description:"sample description 1",Metadata:null));
 
 
-            todoList.Add(new TodoResponseDto(Name: "sample name 2", Description: "sample description 2", Metadata: null));
+            //todoList.Add(new TodoResponseDto(Name: "sample name 2", Description: "sample description 2", Metadata: null));
+            //return Ok(todoList);
+            var isCacheExists = _memoryCache.TryGetValue("todo", out List<TodoResponseDto> cachedTodos);
+
+            if (isCacheExists)
+            {
+                return Ok(cachedTodos);
+            }
+           
+
+
+            var todoList = await _todoService.GetItems();
+            _memoryCache.Set<List<TodoResponseDto>>("todo", todoList.ToList());
+
             return Ok(todoList);
-
 
 
         }
